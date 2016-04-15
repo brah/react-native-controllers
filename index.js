@@ -75,7 +75,6 @@ function _validateDrawerProps(layout) {
     }
 
     if (shouldSetToDefault) {
-      console.warn("Set to default type=MMDrawer animationType=slide");
       drawerProps.type = "MMDrawer";
       drawerProps.animationType = "slide";
     }
