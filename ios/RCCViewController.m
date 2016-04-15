@@ -202,6 +202,13 @@ const NSInteger BLUR_NAVBAR_TAG = 78264802;
     [self.navigationController.navigationBar setTitleTextAttributes:nil];
   }
 
+  NSString *navBarBackgroundImage = self.navigatorStyle[@"navBarBackgroundImage"];
+  if (navBarBackgroundImage != (id)[NSNull null])
+  {
+    UIImage *image = [RCTConvert UIImage:navBarBackgroundImage];
+    [self.navigationController.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
+  }
+
   NSString *navBarButtonColor = self.navigatorStyle[@"navBarButtonColor"];
   if (navBarButtonColor)
   {
