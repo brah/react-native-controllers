@@ -174,10 +174,28 @@ const NSInteger BLUR_NAVBAR_TAG = 78264802;
   }
 
   NSString *navBarTextColor = self.navigatorStyle[@"navBarTextColor"];
-  if (navBarTextColor)
+  NSString *navBarFontFamily = self.navigatorStyle[@"navBarFontFamily"];
+  float navBarFontSize = [self.navigatorStyle[@"navBarFontSize"] floatValue];
+  if (navBarTextColor || navBarFontFamily)
   {
-    UIColor *color = navBarTextColor != (id)[NSNull null] ? [RCTConvert UIColor:navBarTextColor] : nil;
-    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : color}];
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary: [[UINavigationBar appearance] titleTextAttributes]];
+    if (navBarTextColor)
+    {
+      UIColor *color = navBarTextColor != (id)[NSNull null] ? [RCTConvert UIColor:navBarTextColor] : nil;
+      [attributes setValue:color forKey:NSForegroundColorAttributeName];
+    }
+
+    if (navBarFontFamily)
+    {
+      if (!navBarFontSize)
+      {
+        float navBarFontSize = 17.0f;
+      }
+      UIFont *font = [UIFont fontWithName:navBarFontFamily size:navBarFontSize];
+      [attributes setValue:font forKey:NSFontAttributeName];
+    }
+
+    [self.navigationController.navigationBar setTitleTextAttributes:attributes];
   }
   else
   {
