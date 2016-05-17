@@ -135,6 +135,9 @@ var Controllers = {
           params['style'] = Object.assign({}, params['style']);
           _processProperties(params['style']);
         }
+        if (params['titleImage']) {
+          params['titleImage'] = resolveAssetSource(params['titleImage']);
+        }
         if (params['leftButtons']) {
           var unsubscribe = _processButtons(params['leftButtons']);
           unsubscribes.push(unsubscribe);
@@ -192,6 +195,9 @@ var Controllers = {
         var unsubscribe = _processButtons(buttons);
         RCCManager.NavigationControllerIOS(id, "setButtons", {buttons: buttons, side: "right", animated: animated});
         return unsubscribe;
+      },
+      setHidden: function(params = {}) {
+        RCCManager.NavigationControllerIOS(id, "setHidden", params);
       }
     };
   },
@@ -250,6 +256,8 @@ var Controllers = {
       RCCManager.dismissAllControllers(animationType);
     }
   },
+
+  NavigationToolBarIOS: OriginalReact.requireNativeComponent('RCCToolBar', null),
 
   Constants: Constants
 };

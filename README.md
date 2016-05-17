@@ -378,6 +378,55 @@ Modal.showLightBox({
 Modal.dismissLightBox();
 ```
 
+#### Components
+
+##### `NavigationToolBarIOS`
+
+Helper component to assist with adding custom views to the bottom of the navigation bar. You can see this UI pattern in the native iOS Calendar app (week days in the day view) and the native iOS Health app (segmented control in the dashboard tab).
+
+This pattern can be implemented by adding a React component in your **screen component's content** (not really on the nav bar) and making it stick to top (using absolute position). The illusion that this component is part of the nav bar is achieved by wrapping it with `NavigationToolBarIOS ` which provides a background with the same translucent effect the nav bar has.
+
+You can see a working example of all this in the example project.
+
+```js
+var Controllers = require('react-native-controllers');
+var { NavigationToolBarIOS } = Controllers;
+```
+
+###### Example (holding SegmentedControlIOS)
+
+```js
+<NavigationToolBarIOS key='segmented' style={{
+  top: 44,
+  width: width,
+  height: 64,
+  position: 'absolute'
+}}>
+  <SegmentedControlIOS
+    values={['One', 'Two', 'Three']}
+    selectedIndex={this.state.segmentIndexSelected}
+    style={styles.segmentedControl}
+    onChange={(event) => {
+      this.setState({segmentIndexSelected : event.nativeEvent.selectedSegmentIndex});
+    }}
+  />
+  <View style={styles.lineBorder} />
+</NavigationToolBarIOS>
+```
+
+>Note: In order to position this component immediately below the navigation bar, we use `{position: 'absolute'}`. In addition, to make sure z-order is correct and this compoenent is rendered over the rest of the content, add it as the last component in your hierarchy (inside your screen component render method).
+
+###### Props
+
+```jsx
+<NavigationToolBarIOS translucent={true} />
+```
+
+Attribute | Description
+-------- | -----------
+translucent | Boolean, whether the background has the same translucent effect as a nav bar with the `NavBarTranslucent` style. Default `true`.
+
+
 ## Available View Controllers
 
 The package contains implementations for the following view controllers that you can use in your app skeleton:
@@ -402,6 +451,7 @@ Native navigator wrapper around [`UINavigationController`](https://developer.app
 Attribute | Description
 -------- | -----------
 title | Title displayed on the navigation bar on the root view controller (initial route)
+titleImage | Image to be displayed in the navigation bar instead of the title
 component | [Registered name](https://github.com/wix/react-native-controllers#step-3---implement-all-top-level-components) of the component that provides the view for the root view controller (initial route)
 id | Unique ID used to reference this view controller in future API calls
 passProps | Simple serializable object that will pass as props to the pushed component
@@ -424,6 +474,7 @@ var navigationController = Controllers.NavigationControllerIOS("movies");
 require('./PushedScreen');
 navigationController.push({
   title: "New Screen", // nav bar title of the pushed screen (optional)
+  titleImage: require('../img/title_image.png'), //nav bar title image of the pushed screen (optional)
   component: "PushedScreen", // the unique ID registered with AppRegistry.registerComponent (required)
   passProps: {}, // simple serializable object that will pass as props to the pushed component (optional)
   style: {}, // style the navigation bar for the pushed screen (optional, see "Styling Navigation" below)
@@ -515,6 +566,12 @@ navigationController.setTitle({
 });
 ```
 
+* **toggleNavBar(animated = true)** - toggle the navigation bar
+
+```js
+navigationController.toggleNavBar();
+```
+
 ##### Styling Navigation
 
 You can apply styling to the navigation bar appearance and behavior by setting the `style` property when defining your `NavigationControllerIOS` or by passing the `style` object when pushing a new screen.
@@ -534,6 +591,7 @@ All styles are optional, this is the format of the style object:
   navBarHidden: false, // make the nav bar hidden
   navBarHideOnScroll: false, // make the nav bar hidden only after the user starts to scroll
   navBarTranslucent: false, // make the nav bar semi-translucent, works best with drawUnderNavBar:true
+  navBarNoBorder: false, // hide the navigation bar bottom border (hair line)
   drawUnderNavBar: false, // draw the screen content under the nav bar, works best with navBarTranslucent:true
   drawUnderTabBar: false, // draw the screen content under the tab bar (the tab bar is always translucent)
   statusBarBlur: false, // blur the area under the status bar, works best with navBarHidden:true

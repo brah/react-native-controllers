@@ -16,9 +16,17 @@ const NSInteger BLUR_NAVBAR_TAG = 78264802;
 @property (nonatomic) BOOL _statusBarHidden;
 @property (nonatomic) BOOL _statusBarTextColorSchemeLight;
 @property (nonatomic, strong) NSDictionary *originalNavBarImages;
+@property (nonatomic, strong) UIImageView *navBarHairlineImageView;
 @end
 
 @implementation RCCViewController
+
+-(UIImageView *)navBarHairlineImageView {
+  if (!_navBarHairlineImageView) {
+    _navBarHairlineImageView = [self findHairlineImageViewUnder:self.navigationController.navigationBar];
+  }
+  return _navBarHairlineImageView;
+}
 
 + (UIViewController*)controllerWithLayout:(NSDictionary *)layout globalProps:(NSDictionary *)globalProps bridge:(RCTBridge *)bridge
 {
@@ -337,10 +345,21 @@ const NSInteger BLUR_NAVBAR_TAG = 78264802;
     self.edgesForExtendedLayout &= ~UIRectEdgeBottom;
   }
 
+  NSNumber *removeNavBarBorder = self.navigatorStyle[@"navBarNoBorder"];
+  BOOL removeNavBarBorderBool = removeNavBarBorder ? [removeNavBarBorder boolValue] : NO;
+  if(removeNavBarBorderBool)
+  {
+      self.navBarHairlineImageView.hidden = YES;
+  }
+  else
+  {
+    self.navBarHairlineImageView.hidden = NO;
+  }
 }
 
 -(void)setStyleOnDisappear
 {
+  self.navBarHairlineImageView.hidden = NO;
 }
 
 // only styles that can't be set on willAppear should be set here
@@ -402,6 +421,11 @@ const NSInteger BLUR_NAVBAR_TAG = 78264802;
   }
 }
 
+- (void)setNavBarVisibilityChange:(BOOL)animated {
+    [self.navigationController setNavigationBarHidden:[self.navigatorStyle[@"navBarHidden"] boolValue] animated:animated];
+}
+
+
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
   if (self._statusBarTextColorSchemeLight)
@@ -412,6 +436,19 @@ const NSInteger BLUR_NAVBAR_TAG = 78264802;
   {
     return UIStatusBarStyleDefault;
   }
+}
+
+- (UIImageView *)findHairlineImageViewUnder:(UIView *)view {
+  if ([view isKindOfClass:UIImageView.class] && view.bounds.size.height <= 1.0) {
+    return (UIImageView *)view;
+  }
+  for (UIView *subview in view.subviews) {
+    UIImageView *imageView = [self findHairlineImageViewUnder:subview];
+    if (imageView) {
+      return imageView;
+    }
+  }
+  return nil;
 }
 
 @end
